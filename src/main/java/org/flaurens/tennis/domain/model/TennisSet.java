@@ -1,5 +1,12 @@
 package org.flaurens.tennis.domain.model;
 
+import org.flaurens.tennis.domain.model.exceptions.GameIsAlreadyWonException;
+import org.flaurens.tennis.domain.model.exceptions.SetIsNotOverException;
+import org.flaurens.tennis.domain.model.exceptions.UnknownPlayerException;
+import org.flaurens.tennis.domain.model.scores.*;
+import org.flaurens.tennis.domain.model.scoringevents.FirstPlayerGameScoringEvent;
+import org.flaurens.tennis.domain.model.scoringevents.SecondPlayerGameScoringEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +16,9 @@ public class TennisSet {
 
     private SetScore currentSetScore;
 
-    private final List<SetScore> scoreEvolution = new ArrayList<>();
+    private TieBreakScore currentTieBreakScore;
+
+    private final List<GlobalScore> scoreEvolution = new ArrayList<>();
 
     private TennisGame currentGame;
 
@@ -23,21 +32,22 @@ public class TennisSet {
         this.players.add(firstPlayer);
         this.players.add(secondPlayer);
 
-        currentSetScore = SetScore.initialSetScore();
-        this.scoreEvolution.add(currentSetScore);
+        currentSetScore = SetScore.initialScore();
+
     }
 
     public void startGame(){
         this.currentGame = new TennisGame();
+        this.scoreEvolution.add(new GlobalScore(this.currentGame.getCurrentScore(),this.currentSetScore));
     }
 
     public void grantPoint(Player player) throws UnknownPlayerException, GameIsAlreadyWonException {
         boolean isCurrentGameOver;
 
         if(players.get(0).equals(player)){
-            isCurrentGameOver = this.currentGame.updateGameScore(new FirstPlayerScoringEvent());
+            isCurrentGameOver = this.currentGame.updateGameScore(new FirstPlayerGameScoringEvent());
         } else if (players.get(1).equals(player)){
-            isCurrentGameOver = this.currentGame.updateGameScore(new SecondPlayerScoringEvent());
+            isCurrentGameOver = this.currentGame.updateGameScore(new SecondPlayerGameScoringEvent());
         } else {
             throw new UnknownPlayerException("Player unknown : "+player.toString());
         }
@@ -60,7 +70,7 @@ public class TennisSet {
             newSetScore = new SetScore(currentSetScore.getFirstPlayerPoints(), currentSetScore.getSecondPlayerPoints()+1);
         }
         this.currentSetScore = newSetScore;
-        this.scoreEvolution.add(newSetScore);
+        this.scoreEvolution.add(new GlobalScore(this.currentGame.getCurrentScore(),newSetScore));
     }
 
     private void declareWinner(){
@@ -72,11 +82,11 @@ public class TennisSet {
         }
     }
 
-    public List<GameScore> getCurrentGameScoreEvolution(){
+    public List<Score> getCurrentGameScoreEvolution(){
         return currentGame.getScoreEvolution();
     }
 
-    public List<SetScore> getScoreEvolution(){ return scoreEvolution;}
+    public List<GlobalScore> getScoreEvolution(){ return scoreEvolution;}
 
     public boolean isSetOver() {
         return isSetOver;

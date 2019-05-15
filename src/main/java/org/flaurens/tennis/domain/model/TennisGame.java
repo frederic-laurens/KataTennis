@@ -1,13 +1,19 @@
 package org.flaurens.tennis.domain.model;
 
+import org.flaurens.tennis.domain.model.exceptions.GameIsAlreadyWonException;
+import org.flaurens.tennis.domain.model.scores.GameScore;
+import org.flaurens.tennis.domain.model.scores.Points;
+import org.flaurens.tennis.domain.model.scores.Score;
+import org.flaurens.tennis.domain.model.scoringevents.ScoringEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class TennisGame {
 
-    private GameScore gameScore;
+    private Score gameScore;
 
-    private final List<GameScore> scoreEvolution;
+    private final List<Score> scoreEvolution;
 
     private boolean isGameOver;
 
@@ -21,10 +27,10 @@ public class TennisGame {
 
     public boolean updateGameScore(ScoringEvent scoringEvent) throws GameIsAlreadyWonException {
         if(!isGameOver) {
-            GameScore nextScore = scoringEvent.update(gameScore);
+            Score nextScore = scoringEvent.update(gameScore);
             gameScore = nextScore;
             scoreEvolution.add(nextScore);
-            if (nextScore.isFinalScore()) {
+            if (nextScore.isWinningScore()) {
                 this.isGameOver = true;
             }
             return isGameOver;
@@ -32,11 +38,11 @@ public class TennisGame {
         throw new GameIsAlreadyWonException("The final score is : "+ gameScore);
     }
 
-    public List<GameScore> getScoreEvolution(){
-       return this.scoreEvolution;
+    public List<Score> getScoreEvolution(){
+       return new ArrayList<>(this.scoreEvolution);
     }
 
-    public GameScore getCurrentScore() {
-        return gameScore;
+    public Score getCurrentScore() {
+        return this.gameScore.getCopy();
     }
 }

@@ -1,6 +1,6 @@
-package org.flaurens.tennis.domain.model;
+package org.flaurens.tennis.domain.model.scores;
 
-public class SetScore {
+public class SetScore implements Score {
 
     private int firstPlayerPoints;
 
@@ -11,15 +11,15 @@ public class SetScore {
         this.secondPlayerPoints = secondPlayerPoints;
     }
 
-    public static SetScore initialSetScore(){
+    public static SetScore initialScore(){
         return new SetScore(0,0);
     }
 
-    public int getFirstPlayerPoints() {
+    public Integer getFirstPlayerPoints() {
         return firstPlayerPoints;
     }
 
-    public int getSecondPlayerPoints(){
+    public Integer getSecondPlayerPoints(){
         return secondPlayerPoints;
     }
 
@@ -60,5 +60,14 @@ public class SetScore {
 
     public boolean isWinningScore(){
         return oneOfThePlayerHasReached7() || oneOfThePlayerHasReached6WithA2PointDifference();
+    }
+
+    public boolean isTieBreakScore(){
+        return this.firstPlayerPoints == 6 && this.secondPlayerPoints == 6;
+    }
+
+    @Override
+    public Score getCopy() {
+        return new SetScore(this.firstPlayerPoints,this.secondPlayerPoints);
     }
 }

@@ -1,4 +1,6 @@
-package org.flaurens.tennis.domain.model;
+package org.flaurens.tennis.domain.model.exceptions;
+
+import org.flaurens.tennis.domain.model.exceptions.GameFlowException;
 
 public class GameIsAlreadyWonException extends GameFlowException {
 

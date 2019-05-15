@@ -1,5 +1,12 @@
 package org.flaurens.tennis.domain.model;
 
+import org.flaurens.tennis.domain.model.exceptions.GameFlowException;
+import org.flaurens.tennis.domain.model.exceptions.SetIsNotOverException;
+import org.flaurens.tennis.domain.model.exceptions.UnknownPlayerException;
+import org.flaurens.tennis.domain.model.scores.GameScore;
+import org.flaurens.tennis.domain.model.scores.GlobalScore;
+import org.flaurens.tennis.domain.model.scores.Points;
+import org.flaurens.tennis.domain.model.scores.SetScore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,9 +48,9 @@ public class TennisSetTest {
 
     @Test
     public void aSetShouldStartWithAScoreOf0forEachPlayer(){
-        List<SetScore> setScoreEvolution = tennisSet.getScoreEvolution();
+        List<GlobalScore> setScoreEvolution = tennisSet.getScoreEvolution();
         Assertions.assertEquals(1,setScoreEvolution.size());
-        Assertions.assertEquals(new SetScore(0,0), setScoreEvolution.get(0));
+        Assertions.assertEquals(new SetScore(0,0), setScoreEvolution.get(0).getSetScore());
     }
 
     private void winAGame(Player player) throws GameFlowException{
@@ -62,13 +69,13 @@ public class TennisSetTest {
     @Test
     public void theSetScoreShouldIncrementWhenAGameIsWon() throws GameFlowException{
         winAGame(firstPlayer);
-        List<SetScore> setScoreEvolution = tennisSet.getScoreEvolution();
-        Assertions.assertEquals(2,setScoreEvolution.size());
-        Assertions.assertEquals(new SetScore(1,0), setScoreEvolution.get(1));
+        List<GlobalScore> setScoreEvolution = tennisSet.getScoreEvolution();
+        Assertions.assertEquals(3,setScoreEvolution.size());
+        Assertions.assertEquals(new SetScore(1,0), setScoreEvolution.get(2).getSetScore());
     }
 
     @Test
-    public void aSetShouldBeOverWithAScoreOf6to4() throws GameFlowException{
+    public void aSetShouldBeOverWithAScoreOf6To4() throws GameFlowException{
         winXGame(4, firstPlayer);
         winXGame(6, secondPlayer);
         Assertions.assertTrue(tennisSet.isSetOver());
@@ -76,29 +83,39 @@ public class TennisSetTest {
     }
 
     @Test
-    public void aSetShouldNotBeOverWithAScoreOf6to5() throws GameFlowException{
+    public void aSetShouldNotBeOverWithAScoreOf6To5() throws GameFlowException{
         winXGame(5, firstPlayer);
         winXGame(6, secondPlayer);
-        Assertions.assertEquals(new SetScore(5,6),tennisSet.getScoreEvolution().get(11));
+        Assertions.assertEquals(23,tennisSet.getScoreEvolution().size());
+        Assertions.assertEquals(new SetScore(5,6),tennisSet.getScoreEvolution().get(22).getSetScore());
         Assertions.assertFalse(tennisSet.isSetOver());
     }
 
     @Test
-    public void aSetShouldNotBeOverWithAScoreOf6to6() throws GameFlowException{
+    public void aSetShouldNotBeOverWithAScoreOf6To6() throws GameFlowException{
         winXGame(5, firstPlayer);
         winXGame(6, secondPlayer);
         winAGame(firstPlayer);
-        Assertions.assertEquals(new SetScore(6,6),tennisSet.getScoreEvolution().get(12));
+        Assertions.assertEquals(25,tennisSet.getScoreEvolution().size());
+        Assertions.assertEquals(new SetScore(6,6),tennisSet.getScoreEvolution().get(24).getSetScore());
         Assertions.assertFalse(tennisSet.isSetOver());
     }
 
     @Test
-    public void aSetShouldBeOverWithAScoreOf7to6() throws GameFlowException{
+    public void aSetShouldBeOverWithAScoreOf7To6() throws GameFlowException{
         winXGame(5, firstPlayer);
         winXGame(6, secondPlayer);
         winXGame(2, firstPlayer);
-        Assertions.assertEquals(new SetScore(7,6),tennisSet.getScoreEvolution().get(13));
+        Assertions.assertEquals(27,tennisSet.getScoreEvolution().size());
+        Assertions.assertEquals(new SetScore(7,6),tennisSet.getScoreEvolution().get(26).getSetScore());
         Assertions.assertTrue(tennisSet.isSetOver());
         Assertions.assertEquals(tennisSet.getWinner(), firstPlayer);
+    }
+
+    @Test
+    public void tieBreakRuleShouldActivateWithAScoreOf6To6() throws GameFlowException{
+        winXGame(5, firstPlayer);
+        winXGame(6, secondPlayer);
+        winAGame(firstPlayer);
     }
 }

@@ -1,6 +1,6 @@
-package org.flaurens.tennis.domain.model;
+package org.flaurens.tennis.domain.model.scores;
 
-public class GameScore {
+public class GameScore implements Score {
 
     private final Points firstPlayerPoints;
 
@@ -9,6 +9,10 @@ public class GameScore {
     public GameScore(Points firstPlayerPoints, Points secondPlayerPoints){
         this.firstPlayerPoints = firstPlayerPoints;
         this.secondPlayerPoints = secondPlayerPoints;
+    }
+
+    public static GameScore initialScore(){
+        return new GameScore(Points.SCORE0, Points.SCORE0);
     }
 
     public Points getFirstPlayerPoints() {
@@ -45,7 +49,12 @@ public class GameScore {
                 '}';
     }
 
-    public boolean isFinalScore(){
+    public boolean isWinningScore(){
         return this.firstPlayerPoints.isWinning() || this.secondPlayerPoints.isWinning();
+    }
+
+    @Override
+    public Score getCopy() {
+        return new GameScore(this.firstPlayerPoints,this.secondPlayerPoints);
     }
 }

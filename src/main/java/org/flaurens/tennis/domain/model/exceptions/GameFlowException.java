@@ -1,4 +1,4 @@
-package org.flaurens.tennis.domain.model;
+package org.flaurens.tennis.domain.model.exceptions;
 
 public class GameFlowException extends Throwable {
 

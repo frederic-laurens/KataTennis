@@ -1,9 +1,12 @@
-package org.flaurens.tennis.domain.model;
+package org.flaurens.tennis.domain.model.scoringevents;
 
-public class SecondPlayerScoringEvent implements ScoringEvent {
+import org.flaurens.tennis.domain.model.scores.GameScore;
+import org.flaurens.tennis.domain.model.scores.Points;
+
+public class SecondPlayerGameScoringEvent extends GameScoringEvent {
 
     @Override
-    public GameScore update(GameScore score) {
+    public GameScore updateGameScore(GameScore score) {
         if(Points.SCORE40.equals(score.getFirstPlayerPoints().getNextOnLostPoint()) && Points.SCORE40.equals(score.getSecondPlayerPoints().getNextOnWonPoint())){
             return new GameScore(Points.DEUCE, Points.DEUCE);
         } else if(Points.DEUCE.equals(score.getFirstPlayerPoints().getNextOnLostPoint())) {
