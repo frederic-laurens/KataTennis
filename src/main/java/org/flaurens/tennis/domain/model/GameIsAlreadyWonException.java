@@ -1,6 +1,6 @@
 package org.flaurens.tennis.domain.model;
 
-public class GameIsAlreadyWonException extends Throwable {
+public class GameIsAlreadyWonException extends GameFlowException {
 
     private static final long serialVersionUID = 7452758456569893444L;
 

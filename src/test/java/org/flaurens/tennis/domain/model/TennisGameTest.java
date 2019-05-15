@@ -6,155 +6,131 @@ import org.junit.jupiter.api.Test;
 
 public class TennisGameTest {
 
-    private Player firstPlayer = null;
-
-    private Player secondPlayer = null;
-
-    private TennisSet game = null;
-
-
-    @BeforeEach
-    public void createGameAndStartIt(){
-        firstPlayer = new Player("A");
-        secondPlayer = new Player("B");
-        game = new TennisSet(firstPlayer, secondPlayer);
-        game.startSet();
-    }
-
     @Test
     public void gameShouldStartWithNoPointsGivenToAnyPlayer(){
-        Assertions.assertEquals(1, game.getCurrentSetScoreEvolution().size());
+        TennisGame tennisGame = new TennisGame();
+        Assertions.assertEquals(1, tennisGame.getScoreEvolution().size());
         GameScore expectedScore = new GameScore(Points.SCORE0, Points.SCORE0);
-        Assertions.assertEquals(expectedScore, game.getCurrentSetScoreEvolution().get(0));
+        Assertions.assertEquals(expectedScore, tennisGame.getScoreEvolution().get(0));
     }
 
     @Test
-    public void firstPlayerShouldBeAbleToScorePoints() throws UnknownPlayerException, GameIsAlreadyWonException {
-        game.grantPoint(firstPlayer);
-        Assertions.assertEquals(2, game.getCurrentSetScoreEvolution().size());
+    public void firstPlayerShouldBeAbleToScorePoints() throws GameFlowException {
+        TennisGame tennisGame = new TennisGame();
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        Assertions.assertEquals(2, tennisGame.getScoreEvolution().size());
         GameScore expectedFirstScore = new GameScore(Points.SCORE0, Points.SCORE0);
         GameScore expectedSecondScore = new GameScore(Points.SCORE15, Points.SCORE0);
-        Assertions.assertEquals(expectedFirstScore,game.getCurrentSetScoreEvolution().get(0));
-        Assertions.assertEquals(expectedSecondScore,game.getCurrentSetScoreEvolution().get(1));
+        Assertions.assertEquals(expectedFirstScore, tennisGame.getScoreEvolution().get(0));
+        Assertions.assertEquals(expectedSecondScore, tennisGame.getScoreEvolution().get(1));
     }
 
     @Test
-    public void secondPlayerShouldBeAbleToScorePoints() throws UnknownPlayerException, GameIsAlreadyWonException {
-        game.grantPoint(secondPlayer);
-        Assertions.assertEquals(2, game.getCurrentSetScoreEvolution().size());
+    public void secondPlayerShouldBeAbleToScorePoints() throws GameFlowException {
+        TennisGame tennisGame = new TennisGame();
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        Assertions.assertEquals(2, tennisGame.getScoreEvolution().size());
         GameScore expectedFirstScore = new GameScore(Points.SCORE0, Points.SCORE0);
         GameScore expectedSecondScore = new GameScore(Points.SCORE0, Points.SCORE15);
-        Assertions.assertEquals(expectedFirstScore,game.getCurrentSetScoreEvolution().get(0));
-        Assertions.assertEquals(expectedSecondScore,game.getCurrentSetScoreEvolution().get(1));
+        Assertions.assertEquals(expectedFirstScore, tennisGame.getScoreEvolution().get(0));
+        Assertions.assertEquals(expectedSecondScore, tennisGame.getScoreEvolution().get(1));
     }
 
     @Test
-    public void secondPlayerShouldBeAbleToScorePointsTwice() throws UnknownPlayerException, GameIsAlreadyWonException {
-        game.grantPoint(secondPlayer);
-        game.grantPoint(secondPlayer);
-        Assertions.assertEquals(3, game.getCurrentSetScoreEvolution().size());
+    public void secondPlayerShouldBeAbleToScorePointsTwice() throws GameFlowException {
+        TennisGame tennisGame = new TennisGame();
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        Assertions.assertEquals(3, tennisGame.getScoreEvolution().size());
         GameScore expectedFirstScore = new GameScore(Points.SCORE0, Points.SCORE0);
         GameScore expectedSecondScore = new GameScore(Points.SCORE0, Points.SCORE15);
         GameScore expectedThirdScore = new GameScore(Points.SCORE0, Points.SCORE30);
-        Assertions.assertEquals(expectedFirstScore,game.getCurrentSetScoreEvolution().get(0));
-        Assertions.assertEquals(expectedSecondScore,game.getCurrentSetScoreEvolution().get(1));
-        Assertions.assertEquals(expectedThirdScore,game.getCurrentSetScoreEvolution().get(2));
+        Assertions.assertEquals(expectedFirstScore, tennisGame.getScoreEvolution().get(0));
+        Assertions.assertEquals(expectedSecondScore, tennisGame.getScoreEvolution().get(1));
+        Assertions.assertEquals(expectedThirdScore, tennisGame.getScoreEvolution().get(2));
     }
 
 
     @Test
-    void gameShouldHandleUnknownPlayersByNotUpdatingTheScore(){
-        Assertions.assertThrows(UnknownPlayerException.class, () -> game.grantPoint(new Player("Unknown")));
-        Assertions.assertEquals(1, game.getCurrentSetScoreEvolution().size());
-        GameScore expectedFirstScore = new GameScore(Points.SCORE0, Points.SCORE0);
-        Assertions.assertEquals(expectedFirstScore,game.getCurrentSetScoreEvolution().get(0));
-    }
-
-    @Test
-    void aSetShouldBeOverAsSoonAsAPlayerReachesTheWinScore() throws UnknownPlayerException, GameIsAlreadyWonException, GameIsNotOverException{
-        game.grantPoint(firstPlayer);
-        game.grantPoint(firstPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(secondPlayer);
-        Assertions.assertEquals(7, game.getCurrentSetScoreEvolution().size());
+    void aGameShouldBeOverAsSoonAsAPlayerReachesTheWinScore() throws GameFlowException {
+        TennisGame tennisGame = new TennisGame();
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        boolean isGameOver = tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        Assertions.assertEquals(7, tennisGame.getScoreEvolution().size());
         GameScore expectedScore = new GameScore(Points.SCORE30, Points.WIN);
-        Assertions.assertEquals(expectedScore,game.getCurrentSetScoreEvolution().get(6));
-        Assertions.assertTrue(game.isSetOver());
-        Player winner = game.finishSetAndDeclareWinner();
-        Assertions.assertEquals(secondPlayer, winner);
+        Assertions.assertEquals(expectedScore, tennisGame.getScoreEvolution().get(6));
+        Assertions.assertTrue(isGameOver);
     }
 
     @Test
-    public void aSetShouldNotContinueAfterAPlayerHasWon() throws UnknownPlayerException,GameIsAlreadyWonException {
-        game.grantPoint(firstPlayer);
-        game.grantPoint(firstPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(secondPlayer);
-        Assertions.assertThrows(GameIsAlreadyWonException.class, () -> game.grantPoint(firstPlayer));
+    public void aGameShouldNotContinueAfterAPlayerHasWon() throws GameFlowException {
+        TennisGame tennisGame = new TennisGame();
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        Assertions.assertThrows(GameIsAlreadyWonException.class, () -> tennisGame.updateGameScore(new FirstPlayerScoringEvent()));
     }
 
     @Test
-    public void aWinnerShouldNotBeDeclaredBeforeTheGameIsOver() throws UnknownPlayerException, GameIsAlreadyWonException, GameIsNotOverException{
-        game.grantPoint(firstPlayer);
-        game.grantPoint(firstPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(firstPlayer);
-        Assertions.assertThrows(GameIsNotOverException.class, () -> game.finishSetAndDeclareWinner());
-    }
-
-    @Test
-    public void a40to40ScoreShouldLeadToActivationOfTheDeuceRule() throws UnknownPlayerException, GameIsAlreadyWonException {
-        game.grantPoint(firstPlayer);
-        game.grantPoint(firstPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(firstPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(secondPlayer);
+    public void a40to40ScoreShouldLeadToActivationOfTheDeuceRule() throws GameFlowException {
+        TennisGame tennisGame = new TennisGame();
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
         GameScore expectedScore = new GameScore(Points.DEUCE, Points.DEUCE);
-        Assertions.assertEquals(expectedScore,game.getCurrentSetScoreEvolution().get(6));
+        Assertions.assertEquals(expectedScore, tennisGame.getScoreEvolution().get(6));
     }
 
     @Test
-    public void followingADeuceThePlayerWhoWinsThePointShouldTakeTheAdvantage() throws UnknownPlayerException, GameIsAlreadyWonException {
-        game.grantPoint(firstPlayer);
-        game.grantPoint(firstPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(firstPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(secondPlayer);
+    public void followingADeuceThePlayerWhoWinsThePointShouldTakeTheAdvantage() throws GameFlowException {
+        TennisGame tennisGame = new TennisGame();
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
         GameScore expectedScore = new GameScore(Points.SCORE40, Points.ADV);
-        Assertions.assertEquals(expectedScore,game.getCurrentSetScoreEvolution().get(7));
+        Assertions.assertEquals(expectedScore, tennisGame.getScoreEvolution().get(7));
     }
 
-    @Test void ifAPlayerLoosesTheAdvantageTheScoreShouldGetBackToDeuce() throws UnknownPlayerException, GameIsAlreadyWonException {
-        game.grantPoint(firstPlayer);
-        game.grantPoint(firstPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(firstPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(firstPlayer);
+    @Test void ifAPlayerLoosesTheAdvantageTheScoreShouldGetBackToDeuce() throws GameFlowException {
+        TennisGame tennisGame = new TennisGame();
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
         GameScore expectedScore = new GameScore(Points.DEUCE, Points.DEUCE);
-        Assertions.assertEquals(expectedScore,game.getCurrentSetScoreEvolution().get(8));
+        Assertions.assertEquals(expectedScore, tennisGame.getScoreEvolution().get(8));
     }
 
-    @Test void ifThePlayerWhoHasTheAdvantageShouldWinIfHeScoresAgain() throws UnknownPlayerException, GameIsAlreadyWonException {
-        game.grantPoint(firstPlayer);
-        game.grantPoint(firstPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(firstPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(secondPlayer);
-        game.grantPoint(secondPlayer);
+    @Test void thePlayerWhoHasTheAdvantageShouldWinIfHeScoresAgain() throws GameFlowException {
+        TennisGame tennisGame = new TennisGame();
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new FirstPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
+        tennisGame.updateGameScore(new SecondPlayerScoringEvent());
         GameScore expectedScore = new GameScore(Points.SCORE40, Points.WIN);
-        Assertions.assertEquals(expectedScore,game.getCurrentSetScoreEvolution().get(8));
+        Assertions.assertEquals(expectedScore, tennisGame.getScoreEvolution().get(8));
     }
 
 }

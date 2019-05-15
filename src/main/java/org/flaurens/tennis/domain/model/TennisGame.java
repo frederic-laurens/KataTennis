@@ -12,11 +12,11 @@ public class TennisGame {
     private boolean isGameOver;
 
     public TennisGame(){
+        isGameOver = false;
         this.scoreEvolution = new ArrayList<>();
         GameScore startingScore = new GameScore(Points.SCORE0, Points.SCORE0);
-        isGameOver = false;
-        scoreEvolution.add(startingScore);
         gameScore = startingScore;
+        scoreEvolution.add(startingScore);
     }
 
     public boolean updateGameScore(ScoringEvent scoringEvent) throws GameIsAlreadyWonException {
