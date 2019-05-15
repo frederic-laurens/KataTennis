@@ -26,8 +26,8 @@ public class GameScore {
 
         GameScore gameScore = (GameScore) o;
 
-        if (!firstPlayerPoints.equals(gameScore.firstPlayerPoints)){ return false; }
-        return secondPlayerPoints.equals(gameScore.secondPlayerPoints);
+        if (firstPlayerPoints != gameScore.firstPlayerPoints) return false;
+        return secondPlayerPoints == gameScore.secondPlayerPoints;
     }
 
     @Override

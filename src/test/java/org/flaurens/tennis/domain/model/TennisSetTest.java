@@ -24,28 +24,28 @@ public class TennisSetTest {
     @Test
     public void gameShouldStartWithNoPointsGivenToAnyPlayer(){
         Assertions.assertEquals(1, game.getCurrentSetScoreEvolution().size());
-        GameScore expectedEvent = new GameScore(Points.SCORE0, Points.SCORE0);
-        Assertions.assertEquals(expectedEvent, game.getCurrentSetScoreEvolution().get(0));
+        GameScore expectedScore = new GameScore(Points.SCORE0, Points.SCORE0);
+        Assertions.assertEquals(expectedScore, game.getCurrentSetScoreEvolution().get(0));
     }
 
     @Test
     public void firstPlayerShouldBeAbleToScorePoints() throws UnknownPlayerException, GameIsAlreadyWonException {
         game.grantPoint(firstPlayer);
         Assertions.assertEquals(2, game.getCurrentSetScoreEvolution().size());
-        GameScore expectedFirstEvent = new GameScore(Points.SCORE0, Points.SCORE0);
-        GameScore expectedSecondEvent = new GameScore(Points.SCORE15, Points.SCORE0);
-        Assertions.assertEquals(expectedFirstEvent,game.getCurrentSetScoreEvolution().get(0));
-        Assertions.assertEquals(expectedSecondEvent,game.getCurrentSetScoreEvolution().get(1));
+        GameScore expectedFirstScore = new GameScore(Points.SCORE0, Points.SCORE0);
+        GameScore expectedSecondScore = new GameScore(Points.SCORE15, Points.SCORE0);
+        Assertions.assertEquals(expectedFirstScore,game.getCurrentSetScoreEvolution().get(0));
+        Assertions.assertEquals(expectedSecondScore,game.getCurrentSetScoreEvolution().get(1));
     }
 
     @Test
     public void secondPlayerShouldBeAbleToScorePoints() throws UnknownPlayerException, GameIsAlreadyWonException {
         game.grantPoint(secondPlayer);
         Assertions.assertEquals(2, game.getCurrentSetScoreEvolution().size());
-        GameScore expectedFirstEvent = new GameScore(Points.SCORE0, Points.SCORE0);
-        GameScore expectedSecondEvent = new GameScore(Points.SCORE0, Points.SCORE15);
-        Assertions.assertEquals(expectedFirstEvent,game.getCurrentSetScoreEvolution().get(0));
-        Assertions.assertEquals(expectedSecondEvent,game.getCurrentSetScoreEvolution().get(1));
+        GameScore expectedFirstScore = new GameScore(Points.SCORE0, Points.SCORE0);
+        GameScore expectedSecondScore = new GameScore(Points.SCORE0, Points.SCORE15);
+        Assertions.assertEquals(expectedFirstScore,game.getCurrentSetScoreEvolution().get(0));
+        Assertions.assertEquals(expectedSecondScore,game.getCurrentSetScoreEvolution().get(1));
     }
 
     @Test
@@ -53,12 +53,12 @@ public class TennisSetTest {
         game.grantPoint(secondPlayer);
         game.grantPoint(secondPlayer);
         Assertions.assertEquals(3, game.getCurrentSetScoreEvolution().size());
-        GameScore expectedFirstEvent = new GameScore(Points.SCORE0, Points.SCORE0);
-        GameScore expectedSecondEvent = new GameScore(Points.SCORE0, Points.SCORE15);
-        GameScore expectedThirdEvent = new GameScore(Points.SCORE0, Points.SCORE30);
-        Assertions.assertEquals(expectedFirstEvent,game.getCurrentSetScoreEvolution().get(0));
-        Assertions.assertEquals(expectedSecondEvent,game.getCurrentSetScoreEvolution().get(1));
-        Assertions.assertEquals(expectedThirdEvent,game.getCurrentSetScoreEvolution().get(2));
+        GameScore expectedFirstScore = new GameScore(Points.SCORE0, Points.SCORE0);
+        GameScore expectedSecondScore = new GameScore(Points.SCORE0, Points.SCORE15);
+        GameScore expectedThirdScore = new GameScore(Points.SCORE0, Points.SCORE30);
+        Assertions.assertEquals(expectedFirstScore,game.getCurrentSetScoreEvolution().get(0));
+        Assertions.assertEquals(expectedSecondScore,game.getCurrentSetScoreEvolution().get(1));
+        Assertions.assertEquals(expectedThirdScore,game.getCurrentSetScoreEvolution().get(2));
     }
 
 
@@ -66,8 +66,8 @@ public class TennisSetTest {
     void gameShouldHandleUnknownPlayersByNotUpdatingTheScore(){
         Assertions.assertThrows(UnknownPlayerException.class, () -> game.grantPoint(new Player("Unknown")));
         Assertions.assertEquals(1, game.getCurrentSetScoreEvolution().size());
-        GameScore expectedFirstEvent = new GameScore(Points.SCORE0, Points.SCORE0);
-        Assertions.assertEquals(expectedFirstEvent,game.getCurrentSetScoreEvolution().get(0));
+        GameScore expectedFirstScore = new GameScore(Points.SCORE0, Points.SCORE0);
+        Assertions.assertEquals(expectedFirstScore,game.getCurrentSetScoreEvolution().get(0));
     }
 
     @Test
