@@ -1,12 +1,12 @@
 package org.flaurens.tennis.domain.model;
 
-public class SetScore {
+public class GameScore {
 
     private final Points firstPlayerPoints;
 
     private final Points secondPlayerPoints;
 
-    public SetScore(Points firstPlayerPoints, Points secondPlayerPoints){
+    public GameScore(Points firstPlayerPoints, Points secondPlayerPoints){
         this.firstPlayerPoints = firstPlayerPoints;
         this.secondPlayerPoints = secondPlayerPoints;
     }
@@ -24,10 +24,10 @@ public class SetScore {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SetScore setScore = (SetScore) o;
+        GameScore gameScore = (GameScore) o;
 
-        if (firstPlayerPoints != setScore.firstPlayerPoints) return false;
-        return secondPlayerPoints == setScore.secondPlayerPoints;
+        if (!firstPlayerPoints.equals(gameScore.firstPlayerPoints)){ return false; }
+        return secondPlayerPoints.equals(gameScore.secondPlayerPoints);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class SetScore {
 
     @Override
     public String toString() {
-        return "SetScore{" +
+        return "GameScore{" +
                 "firstPlayerPoints=" + firstPlayerPoints +
                 ", secondPlayerPoints=" + secondPlayerPoints +
                 '}';

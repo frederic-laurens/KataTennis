@@ -5,56 +5,38 @@ import java.util.List;
 
 public class TennisGame {
 
-    private final List<Player> players;
+    private GameScore gameScore;
 
-    private TennisSet currentSet;
+    private final List<GameScore> scoreEvolution;
 
     private boolean isGameOver;
 
-    private Player overallGameWinner;
-
-    public TennisGame(Player firstPlayer, Player secondPlayer){
-        this.players = new ArrayList<>();
-        this.players.add(firstPlayer);
-        this.players.add(secondPlayer);
-        this.isGameOver = false;
-        this.overallGameWinner = null;
+    public TennisGame(){
+        this.scoreEvolution = new ArrayList<>();
+        GameScore startingScore = new GameScore(Points.SCORE0, Points.SCORE0);
+        isGameOver = false;
+        scoreEvolution.add(startingScore);
+        gameScore = startingScore;
     }
 
-    public void startSet(){
-        this.currentSet = new TennisSet();
-    }
-
-    public void grantPoint(Player player) throws UnknownPlayerException, SetIsAlreadyWonException {
-        boolean isCurrentSetOver;
-        if(players.get(0).equals(player)){
-            isCurrentSetOver = this.currentSet.updateSetScore(new FirstPlayerScoringEvent());
-        } else if (players.get(1).equals(player)){
-            isCurrentSetOver = this.currentSet.updateSetScore(new SecondPlayerScoringEvent());
-        } else {
-            throw new UnknownPlayerException("Player unknown : "+player.toString());
-        }
-        if(isCurrentSetOver){
-            isGameOver = true;
-            if(Points.WIN.equals(this.currentSet.getCurrentScore().getFirstPlayerPoints())){
-                this.overallGameWinner = players.get(0);
-            } else {
-                this.overallGameWinner = players.get(1);
+    public boolean updateGameScore(ScoringEvent scoringEvent) throws GameIsAlreadyWonException {
+        if(!isGameOver) {
+            GameScore nextScore = scoringEvent.update(gameScore);
+            gameScore = nextScore;
+            scoreEvolution.add(nextScore);
+            if (nextScore.isFinalScore()) {
+                this.isGameOver = true;
             }
+            return isGameOver;
         }
+        throw new GameIsAlreadyWonException("The final score is : "+ gameScore);
     }
 
-    public List<SetScore> getCurrentSetScoreEvolution(){
-        return currentSet.getScoreEvolution();
+    public List<GameScore> getScoreEvolution(){
+       return this.scoreEvolution;
     }
 
-    public boolean isGameOver() {
-        return isGameOver;
-    }
-
-    public Player closeGameAndDeclareWinner() throws GameIsNotOverException{
-        if(isGameOver) {
-            return this.overallGameWinner;
-        } else throw new GameIsNotOverException();
+    public GameScore getCurrentScore() {
+        return gameScore;
     }
 }

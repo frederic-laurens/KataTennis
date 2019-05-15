@@ -5,38 +5,56 @@ import java.util.List;
 
 public class TennisSet {
 
-    private SetScore setScore;
+    private final List<Player> players;
 
-    private final List<SetScore> scoreEvolution;
+    private TennisGame currentGame;
 
     private boolean isSetOver;
 
-    public TennisSet(){
-        this.scoreEvolution = new ArrayList<>();
-        SetScore startingScore = new SetScore(Points.SCORE0, Points.SCORE0);
-        isSetOver = false;
-        scoreEvolution.add(startingScore);
-        setScore = startingScore;
+    private Player setWinner;
+
+    public TennisSet(Player firstPlayer, Player secondPlayer){
+        this.players = new ArrayList<>();
+        this.players.add(firstPlayer);
+        this.players.add(secondPlayer);
+        this.isSetOver = false;
+        this.setWinner = null;
     }
 
-    public boolean updateSetScore(ScoringEvent scoringEvent) throws SetIsAlreadyWonException{
-        if(!isSetOver) {
-            SetScore nextScore = scoringEvent.update(setScore);
-            setScore = nextScore;
-            scoreEvolution.add(nextScore);
-            if (nextScore.isFinalScore()) {
-                this.isSetOver = true;
-            }
-            return isSetOver;
+    public void startSet(){
+        this.currentGame = new TennisGame();
+    }
+
+    public void grantPoint(Player player) throws UnknownPlayerException, GameIsAlreadyWonException {
+        boolean isCurrentSetOver;
+        if(players.get(0).equals(player)){
+            isCurrentSetOver = this.currentGame.updateGameScore(new FirstPlayerScoringEvent());
+        } else if (players.get(1).equals(player)){
+            isCurrentSetOver = this.currentGame.updateGameScore(new SecondPlayerScoringEvent());
+        } else {
+            throw new UnknownPlayerException("Player unknown : "+player.toString());
         }
-        throw new SetIsAlreadyWonException("The final score is : "+setScore);
+        if(isCurrentSetOver){
+            isSetOver = true;
+            if(Points.WIN.equals(this.currentGame.getCurrentScore().getFirstPlayerPoints())){
+                this.setWinner = players.get(0);
+            } else {
+                this.setWinner = players.get(1);
+            }
+        }
     }
 
-    public List<SetScore> getScoreEvolution(){
-       return this.scoreEvolution;
+    public List<GameScore> getCurrentSetScoreEvolution(){
+        return currentGame.getScoreEvolution();
     }
 
-    public SetScore getCurrentScore() {
-        return setScore;
+    public boolean isSetOver() {
+        return isSetOver;
+    }
+
+    public Player finishSetAndDeclareWinner() throws GameIsNotOverException{
+        if(isSetOver) {
+            return this.setWinner;
+        } else throw new GameIsNotOverException();
     }
 }
