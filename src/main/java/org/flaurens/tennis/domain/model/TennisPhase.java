@@ -1,6 +1,6 @@
 package org.flaurens.tennis.domain.model;
 
-import org.flaurens.tennis.domain.model.exceptions.GameIsAlreadyWonException;
+import org.flaurens.tennis.domain.model.exceptions.GamePhaseIsAlreadyWonException;
 import org.flaurens.tennis.domain.model.scores.Score;
 import org.flaurens.tennis.domain.model.scoringevents.ScoringEvent;
 
@@ -15,18 +15,19 @@ public abstract class TennisPhase {
 
     protected boolean isOver;
 
-    public boolean updateGameScore(ScoringEvent scoringEvent) throws GameIsAlreadyWonException {
+    public boolean updateGameScore(ScoringEvent scoringEvent) throws GamePhaseIsAlreadyWonException {
         if(!isOver) {
-            Score nextScore = scoringEvent.update(gameScore);
-            gameScore = nextScore;
-            scoreEvolution.add(nextScore);
-            if (nextScore.isWinningScore()) {
+            gameScore = this.manageEvent(scoringEvent);
+            scoreEvolution.add(gameScore);
+            if (gameScore.isWinningScore()) {
                 this.isOver = true;
             }
             return isOver;
         }
-        throw new GameIsAlreadyWonException("The final score is : "+ gameScore);
+        throw new GamePhaseIsAlreadyWonException("The final score is : "+ gameScore);
     }
+
+    public abstract Score manageEvent(ScoringEvent scoringEvent);
 
     public List<Score> getScoreEvolution(){
         return new ArrayList<>(this.scoreEvolution);
@@ -35,4 +36,6 @@ public abstract class TennisPhase {
     public Score getCurrentScore() {
         return this.gameScore.getCopy();
     }
+
+    public abstract boolean isFirstPlayerWinning();
 }

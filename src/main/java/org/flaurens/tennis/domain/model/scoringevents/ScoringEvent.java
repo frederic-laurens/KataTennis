@@ -1,8 +1,22 @@
 package org.flaurens.tennis.domain.model.scoringevents;
 
-import org.flaurens.tennis.domain.model.scores.Score;
+public class ScoringEvent {
 
-public interface ScoringEvent {
+    private final boolean firstPlayerWins;
 
-    Score update(Score score);
+    public ScoringEvent(boolean firstPlayerWins){
+        this.firstPlayerWins = firstPlayerWins;
+    }
+
+    public boolean isFirstPlayerWins() {
+        return firstPlayerWins;
+    }
+
+    public static ScoringEvent firstPlayerWins(){
+        return new ScoringEvent(true);
+    }
+
+    public static ScoringEvent secondPlayerWins(){
+        return new ScoringEvent(false);
+    }
 }

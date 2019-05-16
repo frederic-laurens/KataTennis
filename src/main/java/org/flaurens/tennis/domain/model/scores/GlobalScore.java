@@ -22,6 +22,14 @@ public class GlobalScore {
         return setScore;
     }
 
+    public Score getGameScore() {
+        return gameScore;
+    }
+
+    public Score getTieBreakScore() {
+        return tieBreakScore;
+    }
+
     @Override
     public String toString() {
         return "GlobalScore{" +
