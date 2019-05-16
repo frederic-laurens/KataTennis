@@ -39,4 +39,30 @@ public class TieBreakScore implements Score {
     public Score getCopy() {
         return new TieBreakScore(this.firstPlayerPoints,this.secondPlayerPoints);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TieBreakScore that = (TieBreakScore) o;
+
+        if (firstPlayerPoints != that.firstPlayerPoints) return false;
+        return secondPlayerPoints == that.secondPlayerPoints;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = firstPlayerPoints;
+        result = 31 * result + secondPlayerPoints;
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "TieBreakScore{" +
+                "firstPlayerPoints=" + firstPlayerPoints +
+                ", secondPlayerPoints=" + secondPlayerPoints +
+                '}';
+    }
 }

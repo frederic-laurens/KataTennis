@@ -1,16 +1,15 @@
 package org.flaurens.tennis.domain.model;
 
-import org.flaurens.tennis.domain.model.scores.GameScore;
+import org.flaurens.tennis.domain.model.scores.TieBreakScore;
 
 import java.util.ArrayList;
 
+public class TieBreak extends TennisPhase {
 
-public class TennisGame extends TennisPhase {
-
-    public TennisGame(){
+    public TieBreak(){
         isOver = false;
         this.scoreEvolution = new ArrayList<>();
-        GameScore startingScore = GameScore.initialScore();
+        TieBreakScore startingScore = TieBreakScore.initialScore();
         gameScore = startingScore;
         scoreEvolution.add(startingScore);
     }
