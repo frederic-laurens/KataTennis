@@ -2,9 +2,9 @@ package org.flaurens.tennis.domain.model.scores;
 
 public class SetScore implements Score {
 
-    private int firstPlayerPoints;
+    private final int firstPlayerPoints;
 
-    private int secondPlayerPoints;
+    private final int secondPlayerPoints;
 
     public SetScore(int firstPlayerPoints, int secondPlayerPoints){
         this.firstPlayerPoints = firstPlayerPoints;

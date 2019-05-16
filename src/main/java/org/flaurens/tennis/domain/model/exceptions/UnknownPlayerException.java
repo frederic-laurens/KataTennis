@@ -1,7 +1,5 @@
 package org.flaurens.tennis.domain.model.exceptions;
 
-import org.flaurens.tennis.domain.model.exceptions.GameFlowException;
-
 public class UnknownPlayerException extends GameFlowException {
 
     private static final long serialVersionUID = 8917758456143293558L;

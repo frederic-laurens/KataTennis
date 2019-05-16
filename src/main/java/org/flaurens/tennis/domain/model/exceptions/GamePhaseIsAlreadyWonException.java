@@ -1,7 +1,5 @@
 package org.flaurens.tennis.domain.model.exceptions;
 
-import org.flaurens.tennis.domain.model.exceptions.GameFlowException;
-
 public class GamePhaseIsAlreadyWonException extends GameFlowException {
 
     private static final long serialVersionUID = 7452758456569893444L;

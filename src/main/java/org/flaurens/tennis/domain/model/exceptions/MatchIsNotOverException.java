@@ -1,7 +1,5 @@
 package org.flaurens.tennis.domain.model.exceptions;
 
-import org.flaurens.tennis.domain.model.exceptions.GameFlowException;
-
 public class MatchIsNotOverException extends GameFlowException {
 
     private static final long serialVersionUID = 745454651213678614L;

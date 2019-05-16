@@ -4,19 +4,16 @@ import org.flaurens.tennis.domain.model.scores.Score;
 import org.flaurens.tennis.domain.model.scores.TieBreakScore;
 
 
-public class TieBreakScoringEventManager {
+public class TieBreakScoringEventManager implements ScoringEventManager {
 
-    private final ScoringEvent event;
-
-    public TieBreakScoringEventManager(ScoringEvent event){
-        this.event = event;
+    public TieBreakScoringEventManager(){
     }
 
-    public TieBreakScore update(TieBreakScore score) {
+    public TieBreakScore update(ScoringEvent event, Score score) {
         if(event.isFirstPlayerWins()){
-            return updateForFirstPlayerWin(score);
+            return updateForFirstPlayerWin((TieBreakScore) score);
         } else {
-            return updateForSecondPlayerWin(score);
+            return updateForSecondPlayerWin((TieBreakScore) score);
         }
     }
 

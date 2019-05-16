@@ -10,8 +10,5 @@ public interface Score {
 
     Score getCopy();
 
-    static Score initialScore(){
-        return null;
-    }
 }
 

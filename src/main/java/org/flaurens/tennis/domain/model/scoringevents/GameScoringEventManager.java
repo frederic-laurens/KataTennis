@@ -2,20 +2,19 @@ package org.flaurens.tennis.domain.model.scoringevents;
 
 import org.flaurens.tennis.domain.model.scores.GameScore;
 import org.flaurens.tennis.domain.model.scores.Points;
+import org.flaurens.tennis.domain.model.scores.Score;
 
-public class GameScoringEventManager {
+public class GameScoringEventManager implements ScoringEventManager{
 
-    private final ScoringEvent event;
+    public GameScoringEventManager(){
 
-    public GameScoringEventManager(ScoringEvent event){
-        this.event = event;
     }
 
-    public GameScore update(GameScore score) {
+    public Score update(ScoringEvent event, Score score) {
         if(event.isFirstPlayerWins()){
-            return updateForFirstPlayerWin(score);
+            return updateForFirstPlayerWin((GameScore) score);
         } else {
-            return updateForSecondPlayerWin(score);
+            return updateForSecondPlayerWin((GameScore) score);
         }
     }
 
